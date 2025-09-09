@@ -6,7 +6,6 @@ I build useful things with a bias for simplicity, automation, and measurable imp
 
 ![عدد الزيارات | Profile views](https://komarev.com/ghpvc/?username=odm-ur-gov-iq-watchingfaile16347827255&label=Profile%20views&color=0e75b6&style=flat)
 [![متابعون | Followers](https://img.shields.io/github/followers/odm-ur-gov-iq-watchingfaile16347827255?label=Follow&style=social)](https://github.com/odm-ur-gov-iq-watchingfaile16347827255)
-[![Site health and GA4 checks](https://github.com/odm-ur-gov-iq-watchingfaile16347827255/odm-ur-gov-iq-watchingfaile16347827255/actions/workflows/site-health.yml/badge.svg)](https://github.com/odm-ur-gov-iq-watchingfaile16347827255/odm-ur-gov-iq-watchingfaile16347827255/actions/workflows/site-health.yml)
 
 ---
 
