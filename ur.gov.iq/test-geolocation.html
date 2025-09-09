@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolocation Wrapper Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .result { margin: 10px 0; padding: 10px; background: #f5f5f5; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+        .info { background: #e3f2fd; color: #1565c0; }
+        button { margin: 5px; padding: 8px 16px; }
+    </style>
+</head>
+<body>
+    <h1>Geolocation Wrapper Test</h1>
+    
+    <div class="test-section">
+        <h2>Configuration Status</h2>
+        <div id="status-result" class="result info">Loading...</div>
+        <button onclick="checkStatus()">Check Status</button>
+    </div>
+
+    <div class="test-section">
+        <h2>getCurrentPosition Test</h2>
+        <div id="getCurrentPosition-result" class="result">Click button to test</div>
+        <button onclick="testGetCurrentPosition()">Test getCurrentPosition</button>
+    </div>
+
+    <div class="test-section">
+        <h2>watchPosition Test</h2>
+        <div id="watchPosition-result" class="result">Click button to test</div>
+        <button onclick="testWatchPosition()">Test watchPosition</button>
+        <button onclick="testClearWatch()">Clear Watch</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Instructions</h2>
+        <p><strong>Default behavior (GEO_ENABLED = false):</strong></p>
+        <ul>
+            <li>All geolocation functions should return errors immediately</li>
+            <li>No browser permission prompts should appear</li>
+            <li>Error messages should be clear and helpful</li>
+        </ul>
+        
+        <p><strong>To test enabled state:</strong></p>
+        <ol>
+            <li>Edit <code>config/geolocation.js</code></li>
+            <li>Change <code>GEO_ENABLED = false</code> to <code>GEO_ENABLED = true</code></li>
+            <li>Refresh this page</li>
+            <li>Test functions should now request actual location permission</li>
+        </ol>
+    </div>
+
+    <script type="module">
+        import { 
+            getCurrentPosition, 
+            watchPosition, 
+            clearWatch, 
+            isGeolocationEnabled,
+            getGeolocationStatus 
+        } from './utils/geolocation.js';
+
+        let watchId = null;
+
+        window.checkStatus = function() {
+            const status = getGeolocationStatus();
+            const isEnabled = isGeolocationEnabled();
+            
+            const result = document.getElementById('status-result');
+            result.innerHTML = `
+                <strong>Geolocation Status:</strong><br>
+                • Config Enabled: ${status.configEnabled}<br>
+                • Browser Supported: ${status.browserSupported}<br>
+                • Available: ${status.available}<br>
+                • Is Enabled: ${isEnabled}
+            `;
+            result.className = `result ${status.available ? 'success' : 'info'}`;
+        };
+
+        window.testGetCurrentPosition = async function() {
+            const result = document.getElementById('getCurrentPosition-result');
+            result.innerHTML = 'Testing getCurrentPosition...';
+            result.className = 'result info';
+
+            try {
+                const position = await getCurrentPosition({
+                    timeout: 10000,
+                    enableHighAccuracy: false
+                });
+                
+                result.innerHTML = `
+                    <strong>Success!</strong><br>
+                    Latitude: ${position.coords.latitude.toFixed(6)}<br>
+                    Longitude: ${position.coords.longitude.toFixed(6)}<br>
+                    Accuracy: ${position.coords.accuracy}m<br>
+                    Timestamp: ${new Date(position.timestamp).toLocaleString()}
+                `;
+                result.className = 'result success';
+            } catch (error) {
+                result.innerHTML = `
+                    <strong>Error:</strong><br>
+                    ${error.message}
+                `;
+                result.className = 'result error';
+            }
+        };
+
+        window.testWatchPosition = function() {
+            const result = document.getElementById('watchPosition-result');
+            result.innerHTML = 'Testing watchPosition...';
+            result.className = 'result info';
+
+            watchId = watchPosition(
+                (position) => {
+                    result.innerHTML = `
+                        <strong>Watch Success!</strong> (Watch ID: ${watchId})<br>
+                        Latitude: ${position.coords.latitude.toFixed(6)}<br>
+                        Longitude: ${position.coords.longitude.toFixed(6)}<br>
+                        Accuracy: ${position.coords.accuracy}m<br>
+                        Timestamp: ${new Date(position.timestamp).toLocaleString()}
+                    `;
+                    result.className = 'result success';
+                },
+                (error) => {
+                    result.innerHTML = `
+                        <strong>Watch Error:</strong><br>
+                        ${error.message}
+                    `;
+                    result.className = 'result error';
+                },
+                {
+                    timeout: 10000,
+                    enableHighAccuracy: false
+                }
+            );
+
+            if (watchId === null) {
+                result.innerHTML = `
+                    <strong>Watch Disabled:</strong><br>
+                    watchPosition returned null (geolocation disabled)
+                `;
+                result.className = 'result error';
+            } else {
+                result.innerHTML += `<br>Watch started with ID: ${watchId}`;
+            }
+        };
+
+        window.testClearWatch = function() {
+            const result = document.getElementById('watchPosition-result');
+            
+            if (watchId !== null) {
+                clearWatch(watchId);
+                result.innerHTML += `<br><strong>Watch cleared</strong> (ID: ${watchId})`;
+                watchId = null;
+            } else {
+                result.innerHTML += `<br><strong>No active watch to clear</strong>`;
+            }
+        };
+
+        // Check status on page load
+        window.addEventListener('load', checkStatus);
+    </script>
+</body>
+</html>

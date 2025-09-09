@@ -4,6 +4,16 @@
 أبني حلولاً عملية تركز على الأثر وتفضل البساطة والأتمتة.  
 I build useful things with a bias for simplicity, automation, and measurable impact.
 
+## 🚫 Geolocation Feature Changes
+
+**Important**: Geolocation requests have been disabled by default to prevent automatic permission prompts.
+
+- **Current Status**: `GEO_ENABLED = false` - No location requests
+- **To Re-enable**: Edit `ur.gov.iq/config/geolocation.js` and set `GEO_ENABLED = true`
+- **Documentation**: See [GEOLOCATION_IMPLEMENTATION.md](GEOLOCATION_IMPLEMENTATION.md) for details
+
+This change ensures users aren't unexpectedly prompted for location permission while preserving the ability to restore functionality when needed.
+
 ![عدد الزيارات | Profile views](https://komarev.com/ghpvc/?username=odm-ur-gov-iq-watchingfaile16347827255&label=Profile%20views&color=0e75b6&style=flat)
 [![متابعون | Followers](https://img.shields.io/github/followers/odm-ur-gov-iq-watchingfaile16347827255?label=Follow&style=social)](https://github.com/odm-ur-gov-iq-watchingfaile16347827255)
 
